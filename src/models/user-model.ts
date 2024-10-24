@@ -1,5 +1,6 @@
 import { IUser } from './../interfaces/IUser';
 import { Document, model, ObjectId, Schema } from "mongoose";
+import bcrypt from "bcrypt"
 
 export interface IUserDocument extends Omit<IUser, "_id">, Document{
     _id:ObjectId
@@ -15,6 +16,16 @@ const userSchema = new Schema<IUserDocument>(
     }
 
 )
+
+userSchema.pre<IUserDocument>('save', async function(next){    
+    if (this.isModified("password")) {
+        this.password = await bcrypt.hash(this.password, 10)
+    }
+    next()
+})
+userSchema.methods.comperePassword = async function(password: string):Promise<boolean>{
+    return bcrypt.compare(password, this.password)
+}
 
 const User = model("User", userSchema)
 
