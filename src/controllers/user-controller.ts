@@ -13,6 +13,15 @@ interface IUserParams extends ParamsDictionary{
 interface IErrorResponse{
     error: string
 }
+export const getUserById = async(req: Request, res: Response)=>{
+    try {
+        const {id} = req.params
+        const user = await UserService.getUserById(id)
+        res.json(user)
+    } catch (error) {
+        res.status(500).json({error: "failed to fetch user"})
+    }
+}
 
 export const getAllUsers = async(req: Request, res: Response)=>{
 try {

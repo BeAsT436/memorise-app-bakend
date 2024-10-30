@@ -3,11 +3,19 @@ import User from "../models/user-model"
 
 
 class UserService {
+    public async getUserById(id:string){
+        try {
+           return User.findById(id) 
+        } catch (error) {
+            throw new Error("failed to fetch user")
+        }
+    }
+
     public async getAllUsers(){
         try {
             return User.find()
         } catch (error) {
-            throw new Error("failde to fetch users")
+            throw new Error("failed to fetch users")
         }
     }
 
@@ -16,7 +24,7 @@ class UserService {
            const newUser = new User(userData)
            return await newUser.save()
         } catch (error) {
-            throw new Error("failde to create user")
+            throw new Error("failed to create user")
         }
     }
 
