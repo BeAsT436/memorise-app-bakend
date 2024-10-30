@@ -1,12 +1,15 @@
 import { Response, Request, RequestHandler } from "express"
 import UserService from "../services/user-service"
 import { IUser } from "../interfaces/IUser"
+import { ParamsDictionary } from "express-serve-static-core"
 
 
 
-interface IUserParams{
+interface IUserParams extends ParamsDictionary{
+
     id:string
 }
+
 interface IErrorResponse{
     error: string
 }
@@ -38,5 +41,16 @@ export const updateUser: RequestHandler<IUserParams, IUser |IErrorResponse, IUse
         res.json(updatedUser)
     } catch (error) {
         res.status(500).json({error:"faild to update user"})
+    }
+}
+export const deleteUser: RequestHandler<IUserParams, unknown, unknown, unknown>= async(req, res)=>{
+    try {
+        const result = await UserService.deleteUser(req.params.id)
+        if (!result){
+            return res.status(404).json({error:"user not found"})
+        }
+        res.status(204).send()
+    } catch (error) {
+        res.status(500).json({error:"faild to delete user"})
     }
 }

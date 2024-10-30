@@ -31,5 +31,14 @@ class UserService {
             throw new Error("failed to update user")
         }
     }
+
+    public async deleteUser(id:string):Promise<boolean>{
+        try {
+            const result = await User.findByIdAndDelete(id)
+            return result !== null
+        } catch (error) {
+            throw new Error("failed to delete user")
+        }
+    }
 }
 export default new UserService()
