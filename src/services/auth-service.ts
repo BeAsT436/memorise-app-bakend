@@ -6,7 +6,7 @@ class AuthService {
     constructor(secret:string) {
         this.secretKey = secret
     }
-    async register(userData:{name:string, email:string, password:string}):Promise<{name:string, email:string, token:string}>{
+    async register(userData:{name:string, email:string, password:string}):Promise<{token:string}>{
         const {email,name,password} = userData
         const exitingUser = await User.findOne({email})
         if (exitingUser) {
@@ -15,9 +15,8 @@ class AuthService {
         const newUser = new User({name, email, password})
         await newUser.save()
         return {
-            name:newUser.name,
-            email:newUser.email,
-            token:jwt.sign({userId:newUser._id}, this.secretKey, {expiresIn:"24h"})
+            
+            token:jwt.sign({userId:newUser._id, name:newUser.name, email:newUser.email}, this.secretKey, {expiresIn:"24h"})
         }
     }
 }
