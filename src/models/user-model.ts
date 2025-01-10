@@ -4,6 +4,7 @@ import bcrypt from "bcrypt"
 
 export interface IUserDocument extends Omit<IUser, "_id">, Document{
     _id:ObjectId
+    comperePassword:(password:string)=>Promise<boolean>
 }
 const userSchema = new Schema<IUserDocument>(
     {
