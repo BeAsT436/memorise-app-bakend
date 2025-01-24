@@ -35,7 +35,7 @@ export const createUser:RequestHandler<unknown, IUser |IErrorResponse, IUser, un
     try {
         const {email,name,password}=req.body
         const newUser = UserService.createUser(
-            {email,name,password}
+            {email,name,password,role:"user"}
         )
         res.status(201).json(await newUser)
     } catch (error) {

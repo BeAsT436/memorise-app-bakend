@@ -7,4 +7,5 @@ export interface IUser{
     createdAt?:Date
     updatedAt?:Date
     _id?:ObjectId
+    role:"super"|"admin"|"user"|"guest"
 }

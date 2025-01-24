@@ -2,6 +2,7 @@ import { IUser } from './../interfaces/IUser';
 import { Document, model, ObjectId, Schema } from "mongoose";
 import bcrypt from "bcrypt"
 
+
 export interface IUserDocument extends Omit<IUser, "_id">, Document{
     _id:ObjectId
     comperePassword:(password:string)=>Promise<boolean>
@@ -10,7 +11,8 @@ const userSchema = new Schema<IUserDocument>(
     {
         name: {type: String, required: true},
         email: {type: String, required: true, unique:true},
-        password: {type: String, required: true}
+        password: {type: String, required: true},
+        role:{type:String, enum:["super","admin","user","guest"],default:"user"}
     },
     {
         timestamps:true
