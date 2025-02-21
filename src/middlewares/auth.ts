@@ -7,7 +7,6 @@ export const auth = (requiredPermissions:Permission[])=>{
     return async (req:CustomRequest, res:Response, next:NextFunction)=>{
         try {
             const user = await User.findById(req.userId)
-            // console.log(req);
             
             if(!user){
                 return res.status(404).json({message:"user not found"})

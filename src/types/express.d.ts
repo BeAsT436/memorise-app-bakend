@@ -3,6 +3,6 @@ import { Role } from "../interfaces/roles";
 
 
 export interface CustomRequest extends Request{
-    userId?: string
+    userId?: Schema.Types.ObjectId
     userRole?:Role
 }
