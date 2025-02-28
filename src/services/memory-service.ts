@@ -17,5 +17,32 @@ class MemoryService{
             throw new Error("failed to create memory")
         }
     }
+
+
+    public async getAllMemories(){
+        try {
+            return Memory.find({local:"public"}).lean().exec()
+        } catch (error) {
+            throw new Error("failed to fetch memories")
+        }
+    }
+
+
+    public async getMyMemories(userId:string){
+        try {
+            return await Memory.find({userId}).lean().exec()
+        } catch (error) {
+            throw new Error("failed to fetch your memories")
+        }
+    }
+
+
+    public async getMemoryById(userId:string,id:string){
+        try {
+            return await Memory.findOne({_id:id,$or:[{userId},{local:"public"}]})
+        } catch (error) {
+            throw new Error("failed to fetch memory")
+        }
+    }
 }
 export default new MemoryService()

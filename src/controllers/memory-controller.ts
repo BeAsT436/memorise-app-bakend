@@ -16,3 +16,35 @@ export const createMemory:RequestHandler = async(req:CustomRequest,res:Response)
         throw new Error("failed to create memory")
     }
 }
+
+
+export const getAllMemories = async(req:CustomRequest,res:Response)=>{
+    try {
+        const memories = await memoryService.getAllMemories()
+        res.status(200).json(memories)
+    } catch (error) {
+        throw new Error("failed to fetch memories")
+    }
+}
+
+
+export const getMyMemories = async(req:CustomRequest,res:Response)=>{
+    try {
+        const {userId} = req
+        const memories = await memoryService.getMyMemories(userId)
+        res.status(200).json(memories)
+    } catch (error) {
+        throw new Error("failed to fetch your memories")
+    }
+}
+
+export const getMemoryById = async(req:CustomRequest,res:Response)=>{
+    try {
+        const {userId} = req
+        const {id} = req.params
+        const memory = await memoryService.getMemoryById(userId,id)
+        res.status(200).json(memory)
+    } catch (error) {
+        throw new Error("failed to fetch memory")
+    }
+}
