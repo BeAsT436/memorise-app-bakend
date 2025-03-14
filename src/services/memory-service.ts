@@ -3,6 +3,9 @@ import Memory, { IMemory } from '../models/memory-model'
 interface IErrorResponce {
   error: string
 }
+type UpdateMemoryDTO = Partial<
+  Omit<IMemory, 'createdAt' | 'updetedAt' | 'id' | 'userId'>
+>
 
 class MemoryService {
   public async createMemory(
@@ -13,7 +16,7 @@ class MemoryService {
 
       await newMemory.save()
       return { ...newMemory.toObject(), id: newMemory._id } as IMemory
-    } catch (error) {
+    } catch (_error) {
       // return {error:"failed to create memory"}
       throw new Error('failed to create memory')
     }
@@ -22,7 +25,7 @@ class MemoryService {
   public async getAllMemories() {
     try {
       return Memory.find({ local: 'public' }).lean().exec()
-    } catch (error) {
+    } catch (_error) {
       throw new Error('failed to fetch memories')
     }
   }
@@ -30,7 +33,7 @@ class MemoryService {
   public async getMyMemories(userId: string) {
     try {
       return await Memory.find({ userId }).lean().exec()
-    } catch (error) {
+    } catch (_error) {
       throw new Error('failed to fetch your memories')
     }
   }
@@ -41,9 +44,49 @@ class MemoryService {
         _id: id,
         $or: [{ userId }, { local: 'public' }],
       })
-    } catch (error) {
+    } catch (_error) {
       throw new Error('failed to fetch memory')
     }
   }
+
+  public async deleteMemoryById(userId: string, id: string) {
+    try {
+      const deletedMemory = await Memory.deleteOne({
+        _id: id,
+        $and: [{ userId }],
+      })
+      if(deletedMemory.deletedCount === 0){
+        return {message:"can't delete this memory"}
+      }
+      return deletedMemory
+    } catch (_error) {
+      throw new Error('failed to delete memory')
+    }
+  }
+
+  public async updateMemory(
+    userId: string,
+    id: string,
+    memoryData: UpdateMemoryDTO,
+  ): Promise<IMemory> {
+    try {
+      const memoryToUpdate = await Memory.findById({
+        _id: id,
+        userId,
+      })
+      
+      if (!memoryToUpdate) {
+        throw new Error('memory not exist')
+      }
+      const memory = await Memory.findByIdAndUpdate(id, memoryData)
+      if (!memory){
+        throw new Error('failed to update memory') 
+      }
+      return memory as IMemory
+    } catch (_error) {
+      throw new Error('failed to update memory')
+    }
+  }
 }
+
 export default new MemoryService()

@@ -48,6 +48,8 @@ export const roles: Roles = {
     Permission.Write,
     Permission.DeleteSelf,
     Permission.UpdateSelf,
+    Permission.Delete,
+    Permission.Update,
   ],
   guest: [],
 }

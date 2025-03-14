@@ -21,7 +21,6 @@ export const verify = (
     if (error) {
       res.status(401).json({ message: 'incorrect token' })
     }
-    console.log(decoded)
 
     req.userId = (decoded as DecodedToken).userId
     req.userRole = (decoded as DecodedToken).userRole

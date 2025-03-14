@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express'
+import { NextFunction, Response } from 'express'
 import { Permission, Role, roles } from '../interfaces/roles'
 import User from '../models/user-model'
 import { CustomRequest } from '../types/express'
@@ -22,7 +22,7 @@ export const auth = (requiredPermissions: Permission[]) => {
       }
       req.userRole = userRole
       next()
-    } catch (error) {
+    } catch (_error) {
       res.status(500).json({ message: 'auth error' })
     }
   }

@@ -5,7 +5,7 @@ class UserService {
   public async getUserById(id: string) {
     try {
       return User.findById(id)
-    } catch (error) {
+    } catch (_error) {
       throw new Error('failed to fetch user')
     }
   }
@@ -13,7 +13,7 @@ class UserService {
   public async getAllUsers() {
     try {
       return User.find()
-    } catch (error) {
+    } catch (_error) {
       throw new Error('failed to fetch users')
     }
   }
@@ -24,7 +24,7 @@ class UserService {
     try {
       const newUser = new User(userData)
       return await newUser.save()
-    } catch (error) {
+    } catch (_error) {
       throw new Error('failed to create user')
     }
   }
@@ -41,7 +41,7 @@ class UserService {
         throw new Error('user not found')
       }
       return updatedUser
-    } catch (error) {
+    } catch (_error) {
       throw new Error('failed to update user')
     }
   }
@@ -50,7 +50,7 @@ class UserService {
     try {
       const result = await User.findByIdAndDelete(id)
       return result !== null
-    } catch (error) {
+    } catch (_error) {
       throw new Error('failed to delete user')
     }
   }

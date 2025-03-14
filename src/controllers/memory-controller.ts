@@ -1,6 +1,6 @@
 import { RequestHandler, Response } from 'express'
 import { CustomRequest } from '../types/express'
-import memoryService from '../services/memory-service'
+import MemoryService from '../services/memory-service'
 
 export const createMemory: RequestHandler = async (
   req: CustomRequest,
@@ -12,7 +12,7 @@ export const createMemory: RequestHandler = async (
     if (!userId) {
       return res.status(400).json({ error: 'userId is missing' })
     }
-    const memory = await memoryService.createMemory({
+    const memory = await MemoryService.createMemory({
       title,
       desc,
       img,
@@ -26,11 +26,11 @@ export const createMemory: RequestHandler = async (
   }
 }
 
-export const getAllMemories = async (req: CustomRequest, res: Response) => {
+export const getAllMemories = async (_req: CustomRequest, res: Response) => {
   try {
-    const memories = await memoryService.getAllMemories()
+    const memories = await MemoryService.getAllMemories()
     res.status(200).json(memories)
-  } catch (error) {
+  } catch (_error) {
     throw new Error('failed to fetch memories')
   }
 }
@@ -38,9 +38,9 @@ export const getAllMemories = async (req: CustomRequest, res: Response) => {
 export const getMyMemories = async (req: CustomRequest, res: Response) => {
   try {
     const { userId } = req
-    const memories = await memoryService.getMyMemories(userId)
+    const memories = await MemoryService.getMyMemories(userId)
     res.status(200).json(memories)
-  } catch (error) {
+  } catch (_error) {
     throw new Error('failed to fetch your memories')
   }
 }
@@ -49,9 +49,33 @@ export const getMemoryById = async (req: CustomRequest, res: Response) => {
   try {
     const { userId } = req
     const { id } = req.params
-    const memory = await memoryService.getMemoryById(userId, id)
+    const memory = await MemoryService.getMemoryById(userId, id)
     res.status(200).json(memory)
-  } catch (error) {
+  } catch (_error) {
     throw new Error('failed to fetch memory')
+  }
+}
+export const deleteMemoryById = async (req: CustomRequest, res: Response) => {
+  try {
+    const { userId } = req
+    const { id } = req.params
+    const memory = await MemoryService.deleteMemoryById(userId, id)
+    res.status(200).json(memory)
+  } catch (_error) {
+    throw new Error('failed delete memory')
+  }
+}
+export const updateMemory = async (req: CustomRequest, res: Response) => {
+  try {
+    const { userId, body } = req
+    const { id } = req.params
+    console.log('userId', userId)
+    console.log('id', id)
+    console.log('body', body)
+
+    const memory = await MemoryService.updateMemory(userId, id, body)
+    res.status(200).json(memory)
+  } catch (_error) {
+    throw new Error('failed update memory')
   }
 }

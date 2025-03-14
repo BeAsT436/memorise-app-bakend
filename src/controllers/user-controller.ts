@@ -15,16 +15,16 @@ export const getUserById = async (req: Request, res: Response) => {
     const { id } = req.params
     const user = await UserService.getUserById(id)
     res.json(user)
-  } catch (error) {
+  } catch (_error) {
     res.status(500).json({ error: 'failed to fetch user' })
   }
 }
 
-export const getAllUsers = async (req: Request, res: Response) => {
+export const getAllUsers = async (_req: Request, res: Response) => {
   try {
     const users = await UserService.getAllUsers()
     res.json(users)
-  } catch (e) {
+  } catch (_e) {
     res.status(500).json({ error: 'failed to fetch users' })
   }
 }
@@ -44,7 +44,7 @@ export const createUser: RequestHandler<
       role: 'user',
     })
     res.status(201).json(await newUser)
-  } catch (error) {
+  } catch (_error) {
     res.status(500).json({ error: 'faild to create user' })
   }
 }
@@ -63,7 +63,7 @@ export const updateUser: RequestHandler<
       password,
     })
     res.json(updatedUser)
-  } catch (error) {
+  } catch (_error) {
     res.status(500).json({ error: 'faild to update user' })
   }
 }
@@ -79,7 +79,7 @@ export const deleteUser: RequestHandler<
       return res.status(404).json({ error: 'user not found' })
     }
     res.status(204).send()
-  } catch (error) {
+  } catch (_error) {
     res.status(500).json({ error: 'faild to delete user' })
   }
 }
