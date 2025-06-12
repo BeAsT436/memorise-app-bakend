@@ -15,6 +15,7 @@ class MemoryService {
       const newMemory = new Memory(memoryData)
 
       await newMemory.save()
+      // remove _id, __v
       return { ...newMemory.toObject(), id: newMemory._id } as IMemory
     } catch (_error) {
       // return {error:"failed to create memory"}
@@ -57,6 +58,7 @@ class MemoryService {
       })
       if(deletedMemory.deletedCount === 0){
         return {message:"can't delete this memory"}
+        
       }
       return deletedMemory
     } catch (_error) {

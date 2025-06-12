@@ -9,7 +9,7 @@ import {
   updateMemory,
 } from '../controllers/memory-controller'
 import { verify } from '../middlewares/verify'
-import { createMemorySchema } from '../dtos/MemoryDTO'
+import { createMemorySchema, updateMemorySchema } from '../dtos/MemoryDTO'
 import { auth } from '../middlewares/auth'
 import { Permission } from '../interfaces/roles'
 
@@ -25,6 +25,12 @@ router.post(
 router.get('/', verify, auth([Permission.Read]), getAllMemories)
 router.get('/me', verify, auth([Permission.Read]), getMyMemories)
 router.get('/:id', verify, auth([Permission.Read]), getMemoryById)
-router.delete('/:id',verify, auth([Permission.Delete]), deleteMemoryById)
-router.put('/:id', verify, auth([Permission.Update]),updateMemory)
+router.delete('/:id', verify, auth([Permission.Delete]), deleteMemoryById)
+router.put(
+  '/:id',
+  verify,
+  auth([Permission.Update]),
+  validateRequests(updateMemorySchema),
+  updateMemory,
+)
 export default router
