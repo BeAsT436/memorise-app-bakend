@@ -57,6 +57,8 @@ export const updateUser: RequestHandler<
   try {
     const { id } = req.params
     const { name, email, password } = req.body
+
+    
     const updatedUser = await UserService.updateUser(id, {
       name,
       email,
