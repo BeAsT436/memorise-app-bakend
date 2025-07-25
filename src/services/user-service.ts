@@ -4,6 +4,7 @@ import User from '../models/user-model'
 class UserService {
   public async getUserById(id: string) {
     try {
+      // todo remove password before sending
       return User.findById(id)
     } catch (_error) {
       throw new Error('failed to fetch user')

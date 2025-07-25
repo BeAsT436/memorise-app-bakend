@@ -36,11 +36,12 @@ export const createUser: RequestHandler<
   unknown
 > = async (req, res) => {
   try {
-    const { email, name, password } = req.body
+    const { email, name, password, avatar } = req.body
     const newUser = UserService.createUser({
       email,
       name,
       password,
+      avatar,
       role: 'user',
     })
     res.status(201).json(await newUser)
@@ -56,13 +57,14 @@ export const updateUser: RequestHandler<
 > = async (req, res) => {
   try {
     const { id } = req.params
-    const { name, email, password } = req.body
+    const { name, email, password, avatar } = req.body
 
     
     const updatedUser = await UserService.updateUser(id, {
       name,
       email,
       password,
+      avatar,
     })
     res.json(updatedUser)
   } catch (_error) {

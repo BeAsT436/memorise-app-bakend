@@ -20,6 +20,7 @@ class AuthService {
     const newUser = new User({ name, email, password })
     await newUser.save()
     return jwt.sign(
+      // todo remove name, email(debug)
       { userId: newUser._id, name: newUser.name, email: newUser.email },
       this.secretKey,
       { expiresIn: '24h' },
@@ -36,6 +37,7 @@ class AuthService {
     if (!isMatch) {
       throw new Error('password or email is incorerct')
     }
+    // todo remove name, email(debug)
     return jwt.sign(
       {
         userId: exitingUser._id,
