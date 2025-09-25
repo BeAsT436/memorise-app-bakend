@@ -2,6 +2,11 @@ import { Response, Request, RequestHandler } from 'express'
 import UserService from '../services/user-service'
 import { IUser } from '../interfaces/IUser'
 import { ParamsDictionary } from 'express-serve-static-core'
+import { CustomRequest } from '../types/express'
+
+interface CustomError{
+  message: string
+}
 
 interface IUserParams extends ParamsDictionary {
   id: string
@@ -59,7 +64,6 @@ export const updateUser: RequestHandler<
     const { id } = req.params
     const { name, email, password, avatar } = req.body
 
-    
     const updatedUser = await UserService.updateUser(id, {
       name,
       email,
@@ -85,5 +89,31 @@ export const deleteUser: RequestHandler<
     res.status(204).send()
   } catch (_error) {
     res.status(500).json({ error: 'faild to delete user' })
+  }
+}
+export const subscribeUser: RequestHandler = async (
+  req: CustomRequest,
+  res: Response,
+) => {
+  try {
+    const result = await UserService.subscribeUser(req.userId, req.params.id)
+    res.status(200).json(result)
+  } catch (error) {
+    const err = error as CustomError
+    console.log(error)
+    res.status(500).json({error:err.message})
+  }
+}
+export const unsubscribeUser: RequestHandler = async (
+  req: CustomRequest,
+  res: Response,
+) => {
+  try {
+    const result = await UserService.unsubscribeUser(req.userId, req.params.id)
+    res.status(200).json(result)
+  } catch (error) {
+    const err = error as CustomError
+    console.log(error)
+    res.status(500).json({error:err.message})
   }
 }

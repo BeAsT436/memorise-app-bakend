@@ -20,7 +20,10 @@ class UserService {
   }
 
   public async createUser(
-    userData: Omit<IUser, 'createdAt' | 'UpdateAt' | '_id'>,
+    userData: Omit<
+      IUser,
+      'createdAt' | 'UpdateAt' | '_id' | 'subscribers' | 'subscriptions'
+    >,
   ): Promise<IUser> {
     try {
       const newUser = new User(userData)
@@ -54,6 +57,46 @@ class UserService {
     } catch (_error) {
       throw new Error('failed to delete user')
     }
+  }
+  public async subscribeUser(currentId:string,idToSubscribe:string){
+    if (currentId === idToSubscribe) {
+      throw new Error('cannot follow yourself')
+    }
+
+    const currentUser = await User.findById(currentId)
+    const userToSubscribe = await User.findById(idToSubscribe)
+
+
+    if (!currentUser || !userToSubscribe) {
+      throw new Error(`user ${currentUser},${userToSubscribe} not found`)
+    }
+
+    currentUser.subscriptions.push(userToSubscribe.id)
+    userToSubscribe.subscribers.push(currentUser.id)
+
+    await currentUser.save()
+    await userToSubscribe.save()
+
+    return {message:"successfully subscribed"}
+  }
+
+  public async unsubscribeUser(currentId:string,idToUnsubscribe:string){
+
+    const currentUser = await User.findById(currentId)
+    const userToUnsubscribe = await User.findById(idToUnsubscribe)
+
+
+    if (!currentUser || !userToUnsubscribe) {
+      throw new Error(`user ${currentUser},${userToUnsubscribe} not found`)
+    }
+
+    currentUser.subscriptions = currentUser.subscriptions.filter((id)=>id.toString()!==idToUnsubscribe)
+    userToUnsubscribe.subscriptions = userToUnsubscribe.subscriptions.filter((id)=>id.toString()!==currentId)
+
+    await currentUser.save()
+    await userToUnsubscribe.save()
+
+    return {message:"successfully subscribed"}
   }
 }
 export default new UserService()

@@ -11,12 +11,14 @@ const userSchema = new Schema<IUserDocument>(
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    avatar:{type: String, required:false},
+    avatar: { type: String, required: false },
     role: {
       type: String,
       enum: ['super', 'admin', 'user', 'guest'],
       default: 'user',
     },
+    subscribers: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+    subscriptions: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   },
   {
     timestamps: true,

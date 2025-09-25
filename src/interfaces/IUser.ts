@@ -1,4 +1,4 @@
-import { ObjectId } from 'mongoose'
+import { ObjectId, Schema } from 'mongoose'
 
 export interface IUser {
   email: string
@@ -9,4 +9,6 @@ export interface IUser {
   updatedAt?: Date
   _id?: ObjectId
   role: 'super' | 'admin' | 'user' | 'guest'
+  subscriptions:Schema.Types.ObjectId[]
+  subscribers:Schema.Types.ObjectId[]
 }
