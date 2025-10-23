@@ -5,7 +5,15 @@ class UserService {
   public async getUserById(id: string) {
     try {
       // todo remove password before sending
-      return User.findById(id)
+      const result = await User.findById(id).exec()
+      if (!result){
+        return
+      }
+      const {password,__v,...rest} = result.toObject()
+      console.log("result:", result);
+      console.log("rest:", rest);
+      return {id:rest._id,...rest}
+
     } catch (_error) {
       throw new Error('failed to fetch user')
     }

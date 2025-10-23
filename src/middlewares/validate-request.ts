@@ -3,7 +3,6 @@ import { Request, Response, NextFunction } from 'express'
 export const validateRequests = (schema: ObjectSchema) => {
   return (req: Request, res: Response, next: NextFunction) => {
     const { error } = schema.validate(req.body)
-    console.log("body", req.body);
     
     if (error) {
       console.log(error.details[0].message)

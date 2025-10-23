@@ -69,9 +69,6 @@ export const updateMemory = async (req: CustomRequest, res: Response) => {
   try {
     const { userId, body } = req
     const { id } = req.params
-    console.log('userId', userId)
-    console.log('id', id)
-    console.log('body', body)
 
     const memory = await MemoryService.updateMemory(userId, id, body)
     res.status(200).json(memory)

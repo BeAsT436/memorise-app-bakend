@@ -97,7 +97,7 @@ export const subscribeUser: RequestHandler = async (
 ) => {
   try {
     const result = await UserService.subscribeUser(req.userId, req.params.id)
-    res.status(200).json(result)
+    res.status(201).json(result)
   } catch (error) {
     const err = error as CustomError
     console.log(error)

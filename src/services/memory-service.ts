@@ -33,7 +33,9 @@ class MemoryService {
 
   public async getMyMemories(userId: string) {
     try {
-      return await Memory.find({ userId }).lean().exec()
+      const memories = await Memory.find({ userId }).lean().exec()
+      
+      return memories
     } catch (_error) {
       throw new Error('failed to fetch your memories')
     }
