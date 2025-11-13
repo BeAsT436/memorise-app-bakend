@@ -1,3 +1,4 @@
+import { AppError } from '../errors/AppError'
 import User from '../models/user-model'
 import jwt from 'jsonwebtoken'
 
@@ -31,11 +32,11 @@ class AuthService {
     const { email, password } = userData
     const exitingUser = await User.findOne({ email })
     if (!exitingUser) {
-      throw new Error('user not found')
+      throw new AppError('user not found', 404)
     }
     const isMatch = await exitingUser.comperePassword(password)
     if (!isMatch) {
-      throw new Error('password or email is incorerct')
+      throw new AppError('password or email is incorrect', 401)
     }
     // todo remove name, email(debug)
     return jwt.sign(

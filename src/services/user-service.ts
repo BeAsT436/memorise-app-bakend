@@ -54,8 +54,11 @@ class UserService {
   }
 
   public async getAllUsers() {
+
     try {
-      return User.find()
+      
+      const users = await User.find().lean().exec()
+      return cleanResponse(users)
     } catch (_error) {
       throw new Error('failed to fetch users')
     }
@@ -83,10 +86,11 @@ class UserService {
       const updatedUser = await User.findByIdAndUpdate(id, userData, {
         new: true,
       })
+      .lean().exec()
       if (!updatedUser) {
         throw new Error('user not found')
       }
-      return updatedUser
+      return cleanResponse(updatedUser) as IUser
     } catch (_error) {
       throw new Error('failed to update user')
     }

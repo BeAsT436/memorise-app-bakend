@@ -2,6 +2,7 @@ import express from 'express'
 import { Config } from './config'
 import { connectDB } from './db'
 import routes from './routes'
+import { errorHandler } from './middlewares/errorHandler'
 
 const app = express()
 
@@ -19,6 +20,8 @@ app.use((_req, res, next) => {
 connectDB()
 
 app.use('/api', routes)
+
+app.use(errorHandler)
 
 app.listen(Config.PORT, () => {
   console.log('server running on port ', Config.PORT)

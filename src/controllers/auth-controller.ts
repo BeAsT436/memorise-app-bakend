@@ -1,12 +1,12 @@
-import { Request, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import { authService } from '../services/auth-service'
 
-export const login = async (req: Request, res: Response) => {
+export const login = async (req: Request, res: Response, next:NextFunction) => {
   try {
     const token = await authService.login(req.body)
     res.status(200).json({ message: 'user was logged in successfully', token })
-  } catch (_error) {
-    res.status(500).json({ message: 'failed to log in' })
+  } catch (error) {
+    next(error)
   }
 }
 
