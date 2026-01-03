@@ -86,7 +86,8 @@ class MemoryService {
       if (!memory){
         throw new Error('failed to update memory') 
       }
-      return memory as IMemory
+      const updatedMemory = await Memory.findById(id)
+      return updatedMemory as IMemory
     } catch (_error) {
       throw new Error('failed to update memory')
     }
