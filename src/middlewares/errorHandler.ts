@@ -12,9 +12,9 @@ export const errorHandler = (
   res: Response,
   _next: NextFunction,
 ) => {
-  console.log('error:', error)
+  console.log('error:', error.isJoi)
 
-  if (error.statusCode)
+  if (error.statusCode && error.isJoi)
     return res.status(error.statusCode).json({ message: error.message })
 
   if (error.isJoi)

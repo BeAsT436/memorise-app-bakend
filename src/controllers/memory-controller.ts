@@ -1,4 +1,4 @@
-import { RequestHandler, Response } from 'express'
+import { NextFunction, RequestHandler, Response } from 'express'
 import { CustomRequest } from '../types/express'
 import MemoryService from '../services/memory-service'
 
@@ -65,14 +65,14 @@ export const deleteMemoryById = async (req: CustomRequest, res: Response) => {
     throw new Error('failed delete memory')
   }
 }
-export const updateMemory = async (req: CustomRequest, res: Response) => {
+export const updateMemory = async (req: CustomRequest, res: Response, next: NextFunction) => {
   try {
     const { userId, body } = req
     const { id } = req.params
 
     const memory = await MemoryService.updateMemory(userId, id, body)
     res.status(200).json(memory)
-  } catch (_error) {
-    throw new Error('failed update memory')
+  } catch (error) {
+     next(error)
   }
 }
