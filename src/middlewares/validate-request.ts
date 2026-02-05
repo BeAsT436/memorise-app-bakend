@@ -5,7 +5,7 @@ export const validateRequests = (schema: ObjectSchema) => {
     const { error } = schema.validate(req.body)
     
     if (error) {
-      console.log(error.details[0].message)
+      console.log("\"\"validate",error.details[0].message)
       error.isJoi = true
       return next(error)
     }

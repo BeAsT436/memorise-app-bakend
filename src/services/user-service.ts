@@ -1,52 +1,13 @@
 import { IUser } from '../interfaces/IUser'
 import User from '../models/user-model'
-
-type BaseDoc = {
-  _id?: unknown
-  __v?: unknown
-  password?: unknown
-  [key: string]: unknown
-}
-
-type CleanOptions<K extends string = string> = { whitelist?: K[] }
-
-type CleanedResponse<K extends string = string> = Record<K | 'id', unknown>
-
-function cleanResponse<K extends string = string>(
-  input: BaseDoc | BaseDoc[],
-  options: CleanOptions<K> = {},
-): CleanedResponse<K> | CleanedResponse<K>[] {
-  const { whitelist } = options
-  const clean = (doc: BaseDoc) => {
-    const { _id, __v, password, ...rest } = doc
-
-    const base: Record<string, unknown> = {
-      id: typeof _id === 'object' && _id !== null ? _id.toString() : _id,
-      ...rest,
-    }
-
-    if (whitelist && whitelist.length > 0) {
-      return whitelist.reduce(
-        (acc, key) => {
-          if (key in base) acc[key] = base[key]
-          return acc
-        },
-        { id: base.id } as CleanedResponse<K>,
-      )
-    }
-
-    return base as CleanedResponse<K>
-  }
-
-  return Array.isArray(input) ? input.map(clean) : clean(input)
-}
+import cleanResponse from '../utils/cleanResponse'
 
 class UserService {
   public async getUserById(id: string) {
     try {
       // todo remove password before sending
       const result = await User.findById(id).lean().exec()
-      if(!result)return
+      if (!result) return
       return cleanResponse(result)
     } catch (_error) {
       throw new Error('failed to fetch user')
@@ -54,9 +15,7 @@ class UserService {
   }
 
   public async getAllUsers() {
-
     try {
-      
       const users = await User.find().lean().exec()
       return cleanResponse(users)
     } catch (_error) {
@@ -86,7 +45,8 @@ class UserService {
       const updatedUser = await User.findByIdAndUpdate(id, userData, {
         new: true,
       })
-      .lean().exec()
+        .lean()
+        .exec()
       if (!updatedUser) {
         throw new Error('user not found')
       }

@@ -1,71 +1,58 @@
+import { AppError } from '../errors/AppError'
 import Memory, { IMemory } from '../models/memory-model'
+import cleanResponse from '../utils/cleanResponse'
 
-interface IErrorResponce {
-  error: string
-}
 type UpdateMemoryDTO = Partial<
   Omit<IMemory, 'createdAt' | 'updetedAt' | 'id' | 'userId'>
 >
+type CreateMemoryDTO = Omit<IMemory, 'createdAt' | 'updetedAt' | 'id'>
 
 class MemoryService {
-  public async createMemory(
-    memoryData: Omit<IMemory, 'createdAt' | 'updetedAt' | 'id'>,
-  ): Promise<IMemory | IErrorResponce> {
-    try {
-      const newMemory = new Memory(memoryData)
+  async createMemory(memoryData: CreateMemoryDTO): Promise<IMemory> {
+    const createdMemory = await Memory.create(memoryData)
+    // todo resolve type for create memory instead of finding
+    const memory = await Memory.findById(createdMemory.id).lean()
 
-      await newMemory.save()
-      // remove _id, __v
-      return { ...newMemory.toObject(), id: newMemory._id } as IMemory
-    } catch (_error) {
-      // return {error:"failed to create memory"}
-      throw new Error('failed to create memory')
+    if (!memory) {
+      throw new AppError('memory not found', 404)
     }
+
+    return cleanResponse(memory) as IMemory
   }
 
   public async getAllMemories() {
-    try {
-      return Memory.find({ local: 'public' }).lean().exec()
-    } catch (_error) {
-      throw new Error('failed to fetch memories')
-    }
+    const memories = await Memory.find({ local: 'public' }).lean()
+
+    return cleanResponse(memories)
   }
 
   public async getMyMemories(userId: string) {
-    try {
-      const memories = await Memory.find({ userId }).lean().exec()
-      
-      return memories
-    } catch (_error) {
-      throw new Error('failed to fetch your memories')
-    }
+    const memories = await Memory.find({ userId }).lean()
+
+    return cleanResponse(memories)
   }
 
   public async getMemoryById(userId: string, id: string) {
-    try {
-      return await Memory.findOne({
-        _id: id,
-        $or: [{ userId }, { local: 'public' }],
-      })
-    } catch (_error) {
-      throw new Error('failed to fetch memory')
+    const memory = await Memory.findOne({
+      _id: id,
+      $or: [{ userId }, { local: 'public' }],
+    }).lean()
+    if (!memory) {
+      throw new AppError('memory not found', 404)
     }
+    return cleanResponse(memory)
   }
 
   public async deleteMemoryById(userId: string, id: string) {
-    try {
+    
       const deletedMemory = await Memory.deleteOne({
         _id: id,
         $and: [{ userId }],
-      })
-      if(deletedMemory.deletedCount === 0){
-        return {message:"can't delete this memory"}
-        
+      }).lean()
+      if (deletedMemory.deletedCount === 0) {
+        return { message: "can't delete this memory" }
       }
-      return deletedMemory
-    } catch (_error) {
-      throw new Error('failed to delete memory')
-    }
+      return {success:true}
   }
 
   public async updateMemory(
@@ -78,13 +65,13 @@ class MemoryService {
         _id: id,
         userId,
       })
-      
+
       if (!memoryToUpdate) {
         throw new Error('memory not exist')
       }
       const memory = await Memory.findByIdAndUpdate(id, memoryData)
-      if (!memory){
-        throw new Error('failed to find memory') 
+      if (!memory) {
+        throw new Error('failed to find memory')
       }
       const updatedMemory = await Memory.findById(id)
       return updatedMemory as IMemory
