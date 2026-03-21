@@ -44,15 +44,20 @@ class MemoryService {
   }
 
   public async deleteMemoryById(userId: string, id: string) {
-    
-      const deletedMemory = await Memory.deleteOne({
-        _id: id,
-        $and: [{ userId }],
-      }).lean()
-      if (deletedMemory.deletedCount === 0) {
-        return { message: "can't delete this memory" }
-      }
-      return {success:true}
+    if (id == undefined || !id || id == 'undefined' || id == null) {
+      throw new AppError("id can't be undefined")
+    }
+    const memory = await Memory.findById(id)
+
+    //todo resolve issue with error res
+    if (!memory) throw new AppError('memory not found')
+
+    await Memory.deleteOne({
+      _id: id,
+      $and: [{ userId }],
+    }).lean()
+
+    return { success: true }
   }
 
   public async updateMemory(
@@ -60,24 +65,26 @@ class MemoryService {
     id: string,
     memoryData: UpdateMemoryDTO,
   ): Promise<IMemory> {
-    try {
-      const memoryToUpdate = await Memory.findById({
-        _id: id,
-        userId,
-      })
+    const memoryToUpdate = await Memory.findById(id).lean()
 
-      if (!memoryToUpdate) {
-        throw new Error('memory not exist')
-      }
-      const memory = await Memory.findByIdAndUpdate(id, memoryData)
-      if (!memory) {
-        throw new Error('failed to find memory')
-      }
-      const updatedMemory = await Memory.findById(id)
-      return updatedMemory as IMemory
-    } catch (_error) {
-      throw new Error('failed to update memory')
+    if (!memoryToUpdate) {
+      throw new AppError('memory not exist', 404)
     }
+    
+    if(memoryToUpdate.userId.toString() !== userId){
+      throw new AppError("access denied", 403)
+    }
+    
+    
+    const memory = await Memory.findByIdAndUpdate(
+      { _id: id, userId},
+      memoryData,
+      { new: true },
+    ).lean()
+    if (!memory) {
+      throw new AppError('failed to find memory', 404)
+    }
+    return cleanResponse(memory) as IMemory
   }
 }
 

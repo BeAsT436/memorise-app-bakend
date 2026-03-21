@@ -45,24 +45,24 @@ export const getMyMemories = async (req: CustomRequest, res: Response) => {
   }
 }
 
-export const getMemoryById = async (req: CustomRequest, res: Response) => {
+export const getMemoryById = async (req: CustomRequest, res: Response, next: NextFunction) => {
   try {
     const { userId } = req
     const { id } = req.params
     const memory = await MemoryService.getMemoryById(userId, id)
     res.status(200).json(memory)
-  } catch (_error) {
-    throw new Error('failed to fetch memory')
+  } catch (error) {
+    next(error)
   }
 }
-export const deleteMemoryById = async (req: CustomRequest, res: Response) => {
+export const deleteMemoryById = async (req: CustomRequest, res: Response, next: NextFunction) => {
   try {
     const { userId } = req
     const { id } = req.params
     const memory = await MemoryService.deleteMemoryById(userId, id)
     res.status(200).json(memory)
-  } catch (_error) {
-    throw new Error('failed delete memory')
+  } catch (error) {
+    next(error)
   }
 }
 export const updateMemory = async (req: CustomRequest, res: Response, next: NextFunction) => {

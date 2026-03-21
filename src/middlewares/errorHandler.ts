@@ -13,20 +13,20 @@ export const errorHandler = (
   _next: NextFunction,
 ) => {
   if (error.isJoi) {
-    console.log("isjoi");
-    console.log("message",error.details?.[0].message);
-    
+    console.log('isjoi')
+    console.log('message', error.details?.[0].message)
+
     return res.status(error.statusCode || 400).json({
       message:
         error.details?.[0].message || error.message || 'validation error',
     })
   }
-  console.log("global");
+  console.log('global')
+
+  console.log("error.details: ",JSON.stringify(error,null, 2) );
   
-  res.status(error.statusCode||500).json({
-    
-    
-    message: error.details?.[0].message ||"server error"
+
+  res.status(error.statusCode || 500).json({
+    message: error.details?.[0].message || error.message || 'server error',
   })
-  
 }
